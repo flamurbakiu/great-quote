@@ -1,34 +1,60 @@
+import React, { Suspense, useContext } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
+
 import Layout from './components/layout/Layout';
-import AllQuotes from './pages/AllQuotes';
-import NewQuote from './pages/NewQuote';
-import NotFound from './pages/NotFound';
-import QuoteDetail from './pages/QuoteDetail';
+import LoadingSpinner from './components/UI/LoadingSpinner';
+import AuthPage from './pages/AuthPage';
+import AuthContext from './store/auth-context';
+
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const AllQuotes = React.lazy(() => import('./pages/AllQuotes'));
+const NewQuote = React.lazy(() => import('./pages/NewQuote'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
+const QuoteDetail = React.lazy(() => import('./pages/QuoteDetail'));
 
 function App() {
+  const authCtx = useContext(AuthContext);
+
   return (
     <Layout>
-      <Switch>
-        <Route path='/' exact>
-          <Redirect to='/quotes' />
-        </Route>
+      <Suspense
+        fallback={
+          <div className='centered'>
+            <LoadingSpinner />
+          </div>
+        }
+      >
+        <Switch>
+          <Route path='/' exact>
+            <HomePage />
+          </Route>
 
-        <Route path='/quotes' exact>
-          <AllQuotes />
-        </Route>
+          {!authCtx.isLoggedIn && (
+            <Route path='/auth' exact>
+              <AuthPage />
+            </Route>
+          )}
 
-        <Route path='/quotes/:quoteId'>
-          <QuoteDetail />
-        </Route>
+          <Route path='/quotes' exact>
+            {authCtx.isLoggedIn && <AllQuotes />}
+            {!authCtx.isLoggedIn && <Redirect to='/auth' />}
+          </Route>
 
-        <Route path='/new-quote'>
-          <NewQuote />
-        </Route>
+          <Route path='/quotes/:quoteId'>
+            {authCtx.isLoggedIn && <QuoteDetail />}
+            {!authCtx.isLoggedIn && <Redirect to='/auth' />}
+          </Route>
 
-        <Route path='*'>
-          <NotFound />
-        </Route>
-      </Switch>
+          <Route path='/new-quote'>
+            {authCtx.isLoggedIn && <NewQuote />}
+            {!authCtx.isLoggedIn && <Redirect to='/auth' />}
+          </Route>
+
+          <Route path='*'>
+            <NotFound />
+          </Route>
+        </Switch>
+      </Suspense>
     </Layout>
   );
 }
