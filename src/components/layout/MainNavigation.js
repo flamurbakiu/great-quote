@@ -30,6 +30,13 @@ const MainNavigation = () => {
           )}
           {isLoggedIn && (
             <li>
+              <NavLink to='/profile' activeClassName={classes.active}>
+                Profile
+              </NavLink>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li>
               <NavLink to='/quotes' activeClassName={classes.active}>
                 All Quotes
               </NavLink>

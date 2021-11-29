@@ -7,6 +7,7 @@ import AuthPage from './pages/AuthPage';
 import AuthContext from './store/auth-context';
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
+const ProfilePage = React.lazy(() => import('./pages/ProfilePage'));
 const AllQuotes = React.lazy(() => import('./pages/AllQuotes'));
 const NewQuote = React.lazy(() => import('./pages/NewQuote'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
@@ -34,6 +35,11 @@ function App() {
               <AuthPage />
             </Route>
           )}
+
+          <Route path='/profile' exact>
+            {authCtx.isLoggedIn && <ProfilePage />}
+            {!authCtx.isLoggedIn && <Redirect to='/auth' />}
+          </Route>
 
           <Route path='/quotes' exact>
             {authCtx.isLoggedIn && <AllQuotes />}
