@@ -46,3 +46,9 @@
 .nav a.active {
   color: #e6fcfc;
 }
+
+@media screen and (max-width: 580px) {
+  .header {
+    flex-direction: column;
+  }
+}
